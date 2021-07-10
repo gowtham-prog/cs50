@@ -167,11 +167,11 @@ bool print_winner(void)
     int half = voter_count/2;
     for(int i=0;i<candidate_count;i++){
         if (candidates[i].votes >half){
-            printf("%s",candidates[i].name)
-            flag=true;
+            printf("%s\n", candidates[i].name);
+            return true;
         }
    }
-   return flag;
+   return false;
     
 }
 
