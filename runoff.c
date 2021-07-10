@@ -128,24 +128,20 @@ int main(int argc, string argv[])
 // Record preference if vote is valid
 bool vote(int voter, int rank, string name)
 {
+    bool flag=false;
     int i;
     int j;
     for ( j=0; j<candidate_count ; j++){
         int s = strcmp(candidates[j].name,name);
         if (s==0){
+            flag= true;
             break;
         }
     }
-    for (i=0;i<candidate_count ;i++){
-        int c= strcmp(candidates[preferences[voter][i]].name,name);
-        if (c==0){
-            return true;
-        }
-        else{
-            preferences[voter][i] = j;
-            return false;
-        }
+    if (flag){
+        preferences[voter][rank]=j;
     }
+    return flag;
 }
 
 // Tabulate votes for non-eliminated candidates
@@ -153,19 +149,14 @@ void tabulate(void)
 {
     int j=0;
     for (int i=0; i<voter_count ; i++){
-        for( int k=0; k<candidate_count ; k++){
-            while(j<candidate_count){
-                int c =strcmp(candidates[preferences[i][j]].name,candidates[k].name);
-                if(c==0){
-                   if(!candidates[k].eliminated){
-                       candidates[k].votes++;
-                       break;
-                     }
-                    else if(candidates[k].eliminated){
-                        j++;     
-                    }
-                   break;
-                }           
+        while(j< candidate_count){
+            int k=  preferences[i][j];
+            if (!candidates[k].eliminated){
+                candidates[k].votes++;
+                break;
+            }
+            else{
+                j++;
             }
         }
     }
@@ -179,7 +170,6 @@ bool print_winner(void)
     int half = candidate_count/2+1;
     for(int i=0;i<candidate_count;i++){
         if (candidates[i].votes >=half){
-            printf("%s\n", candidates[i].name);
             flag=true;
             break;
         }
@@ -191,9 +181,9 @@ bool print_winner(void)
 // Return the minimum number of votes any remaining candidate has
 int find_min(void)
 {
-    int min=0;
+    int min=candidate[0].votes;
     for (int i=0 ; i< candidate_count ; i++){
-        if (candidates[i].votes < min){
+        if (candidates[i].votes < min && !candidates[i].eliminated){
             min= candidates[i].votes;
         }
     }
